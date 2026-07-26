@@ -7,7 +7,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# ==================== 데이터 (구조 + 연습 문제) ====================
+# ==================== 데이터 ====================
 LEARNING_PATH = {
     "1단계: 2026 수특 「심리 철학의 물리주의 이론들」": {
         "goal": "물리주의 계열 이론의 대비 구조를 익힌다.",
@@ -59,7 +59,6 @@ LEARNING_PATH = {
     }
 }
 
-# 연습 문제 (교육용)
 PRACTICE_QUESTIONS = {
     "로랜즈 확장인지": [
         {
@@ -149,7 +148,14 @@ if "user_passage" not in st.session_state:
 st.sidebar.title("학습 경로")
 mode = st.sidebar.radio(
     "모드 선택",
-    ["지문 붙여넣기 + 구조 분석", "1단계 물리주의", "2단계 중국어방", "3단계 로랜즈·인격동일성", "추가 연습 3제", "구조 독해 총정리"]
+    [
+        "지문 붙여넣기 + 구조 분석",
+        "1단계 물리주의",
+        "2단계 중국어방",
+        "3단계 로랜즈·인격동일성",
+        "추가 연습 3제",
+        "구조 독해 총정리"
+    ]
 )
 
 st.sidebar.markdown("---")
@@ -167,7 +173,7 @@ st.caption("실제 지문을 붙여넣고 구조 분석 + 문제 풀이를 함�
 if mode == "지문 붙여넣기 + 구조 분석":
     st.header("① 지문 붙여넣기")
     st.info("수능특강이나 평가원 문제지에서 해당 지문을 복사한 뒤 아래에 붙여넣으세요.")
-    
+
     passage = st.text_area(
         "지문 입력란 (여기에 붙여넣기)",
         value=st.session_state.user_passage,
@@ -175,10 +181,10 @@ if mode == "지문 붙여넣기 + 구조 분석":
         placeholder="여기에 지문 전문을 붙여넣으세요..."
     )
     st.session_state.user_passage = passage
-    
+
     if passage.strip():
         st.success(f"지문이 입력되었습니다. (글자 수: {len(passage)})")
-        
+
         st.header("② 구조 분석 가이드")
         col1, col2 = st.columns(2)
         with col1:
@@ -197,11 +203,11 @@ if mode == "지문 붙여넣기 + 구조 분석":
             3. 새로운 이론의 조건  
             4. 심적 상태 vs 파생적 상태 구분  
             """)
-        
+
         st.header("③ 문제 풀이")
         q_set = st.selectbox("문제 세트 선택", ["로랜즈 확장인지", "인격 동일성", "추가연습"])
         for i, item in enumerate(PRACTICE_QUESTIONS[q_set]):
-            with st.expander(f"문제 {i+1}", expanded=(i==0)):
+            with st.expander(f"문제 {i+1}", expanded=(i == 0)):
                 st.markdown(item["q"])
                 ans = st.radio("선택", item["options"], key=f"paste_q_{q_set}_{i}")
                 if st.button("정답 확인", key=f"paste_btn_{q_set}_{i}"):
@@ -221,26 +227,27 @@ elif mode in ["1단계 물리주의", "2단계 중국어방", "3단계 로랜즈
         "3단계 로랜즈·인격동일성": "3단계: 2024.6 평가원 로랜즈 + 2026 수능 인격 동일성"
     }
     data = LEARNING_PATH[key_map[mode]]
-    
+
     st.header(key_map[mode])
     st.markdown(f"**학습 목표**: {data['goal']}")
-    
+
     col1, col2 = st.columns([1.3, 1])
     with col1:
         st.subheader("핵심 구조")
         for s in data["structure"]:
             st.markdown(f"- {s}")
+
         st.subheader("핵심 개념")
         for k, v in data["key_points"].items():
-            st.markdown(f"**{k}**  
-{v}")
+            st.markdown(f"**{k}**: {v}")
+
     with col2:
         st.subheader("독해 방법")
         st.success(data["reading_method"])
         st.subheader("지문 붙여넣기")
         st.caption("이 단계의 원문을 여기에 붙여넣으면 옆에 두고 볼 수 있습니다.")
         local_passage = st.text_area("원문", height=250, key=f"local_{mode}")
-    
+
     st.markdown("---")
     st.subheader("연습 문제")
     q_key = "로랜즈 확장인지" if "로랜즈" in mode or "물리주의" in mode else "인격 동일성"
@@ -259,7 +266,7 @@ elif mode in ["1단계 물리주의", "2단계 중국어방", "3단계 로랜즈
 elif mode == "추가 연습 3제":
     st.header("유사 패턴 추가 연습")
     for i, item in enumerate(PRACTICE_QUESTIONS["추가연습"]):
-        with st.expander(f"추가 문제 {i+1}", expanded=(i==0)):
+        with st.expander(f"추가 문제 {i+1}", expanded=(i == 0)):
             st.markdown(item["q"])
             ans = st.radio("선택", item["options"], key=f"extra_{i}")
             if st.button("정답 확인", key=f"extra_btn_{i}"):
